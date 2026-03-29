@@ -61,7 +61,7 @@ const HotelList = () => {
               <li key={hl.id}>
                 <p>{hl.name}</p>
                 <p>{hl.address}</p>
-                <p>rating { "⭐".repeat(Number(hl.rating) || 0) } </p>
+                <p>rating {"⭐".repeat(Math.max(0, Math.floor(Number(hl.rating || 0))))}</p>
               </li>
             ))}
           </ul>
