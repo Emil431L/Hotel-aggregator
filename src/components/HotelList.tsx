@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useHotels } from '../hooks/useHotels';
 
-interface Field {
+interface FieldProps {
   label: string,
   children: React.ReactNode
 }
 
-const Field = (props: Field) => {
+const Field = (props: FieldProps) => {
   return (
     <div>
       <label>{props.label}</label>
