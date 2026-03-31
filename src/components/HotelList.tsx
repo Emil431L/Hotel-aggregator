@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useHotels } from '../hooks/useHotels';
-import '..css/HotelList.css';
+import '../css/HotelList.css';
 
 interface FieldProps {
   label: string,
