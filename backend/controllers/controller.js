@@ -1,10 +1,10 @@
-import axios from "axios";
+const axios = require("axios");
 
-export const handler = (req, res) => {
+const handler = (req, res) => {
   res.send("Hotels list");
 };
 
-export default async function handler(req, res) {
+const getHotels = async (req, res) => {
   const { city } = req.query;
   if (!city) return res.status(400).json({ message: "City required" });
 
@@ -18,4 +18,6 @@ export default async function handler(req, res) {
     console.error(err.response?.data?.message || err.message);
     res.status(500).json({ message: "Server error" });
   }
-}
+};
+
+module.exports = { handler, getHotels };
