@@ -55,18 +55,17 @@ const HotelList = () => {
         </div>
         )}
 
-        {hotels.length > 0 && (
+        {Array.isArray(hotels) && hotels.length > 0 && (
           <ul>
             {hotels.map((hl) => (
               <li key={hl.id}>
                 <p>{hl.name}</p>
                 <p>{hl.address}</p>
                 <p>rating {"⭐".repeat(Math.max(0, Math.floor(Number(hl.rating || 0))))}</p>
-              </li>
-            ))}
-          </ul>
-        )}
-
+                </li>
+              ))}
+              </ul>
+            )}
       </form>
     </div>
   )
