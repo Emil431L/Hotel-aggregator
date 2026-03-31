@@ -1,4 +1,8 @@
-const axios = require("axios")
+import axios from "axios";
+
+export const handler = (req, res) => {
+  res.send("Hotels list");
+};
 
 export default async function handler(req, res) {
   const { city } = req.query;
