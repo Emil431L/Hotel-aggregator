@@ -31,7 +31,7 @@ export default async function handler(req, res) {
 
     res.status(200).json(hotels);
   } catch (err) {
-    console.error(err.response?.data || err.message);
+    console.error("FULL ERROR:", err);
     res.status(500).json({ message: "Server error" });
   }
 }
