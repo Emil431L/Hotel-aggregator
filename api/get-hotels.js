@@ -8,13 +8,13 @@ export default async function handler(req, res) {
     return res.status(400).json({ message: "City required" });
   }
 
-  const cacheKey = `hotels:${city.toLowercase().trim()}`
+  const cacheKey = `hotels:${city.toLowerCase().trim()}`
 
   try {
-    const cacheHotels = await kv.get(cacheKey)
+    const cachedHotels = await kv.get(cacheKey)
 
     if (cacheHotels) {
-      console.log("City ${city} returned from cache Vercel KV 🚀")
+      console.log(`City ${city} returned from cache Vercel KV 🚀`)
       return res.status(200).json(cacheHotels)
     }
 
@@ -25,7 +25,7 @@ export default async function handler(req, res) {
       },
     });
 
-    const hotels = response.data.data
+    const hotels = response.data.data || []
 
     await kv.set(cacheKey, hotels, { ex: 1296000 })
 
