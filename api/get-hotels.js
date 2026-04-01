@@ -13,9 +13,9 @@ export default async function handler(req, res) {
   try {
     const cachedHotels = await kv.get(cacheKey)
 
-    if (cacheHotels) {
+    if (cachedHotels) {
       console.log(`City ${city} returned from cache Vercel KV 🚀`)
-      return res.status(200).json(cacheHotels)
+      return res.status(200).json(cachedHotels)
     }
 
     const response = await axios.get("https://api.hotels-api.com/v1/hotels/search", {
