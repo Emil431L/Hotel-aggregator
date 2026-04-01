@@ -1,5 +1,11 @@
 import axios from "axios";
-import { kv } from "@vercel/kv"
+import { createClient } from "redis";
+
+const redis = createClient({
+  url: process.env.REDIS_URL,
+});
+
+await redis.connect();
 
 export default async function handler(req, res) {
   const { city } = req.query;
@@ -8,14 +14,14 @@ export default async function handler(req, res) {
     return res.status(400).json({ message: "City required" });
   }
 
-  const cacheKey = `hotels:${city.toLowerCase().trim()}`
+  const cacheKey = `hotels:${city.toLowerCase().trim()}`;
 
   try {
-    const cachedHotels = await kv.get(cacheKey)
+    const cachedHotels = await redis.get(cacheKey);
 
     if (cachedHotels) {
-      console.log(`City ${city} returned from cache Vercel KV 🚀`)
-      return res.status(200).json(cachedHotels)
+      console.log(`City ${city} returned from Redis 🚀`);
+      return res.status(200).json(JSON.parse(cachedHotels));
     }
 
     const response = await axios.get("https://api.hotels-api.com/v1/hotels/search", {
@@ -25,9 +31,11 @@ export default async function handler(req, res) {
       },
     });
 
-    const hotels = response.data.data || []
+    const hotels = response.data.data || [];
 
-    await kv.set(cacheKey, hotels, { ex: 1296000 })
+    await redis.set(cacheKey, JSON.stringify(hotels), {
+      EX: 1296000,
+    });
 
     res.status(200).json(hotels);
   } catch (err) {
@@ -35,4 +43,3 @@ export default async function handler(req, res) {
     res.status(500).json({ message: "Server error" });
   }
 }
-
