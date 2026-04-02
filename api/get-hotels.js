@@ -1,143 +1,48 @@
-// import axios from "axios";
-// import { createClient } from "redis";
+import { createClient } from "redis"
+import axios from "axios"
 
-// const redis = createClient({
-//   url: process.env.REDIS_URL,
-// });
-
-// await redis.connect();
-
-// export default async function handler(req, res) {
-//   const { city } = req.query;
-
-//   if (!city) {
-//     return res.status(400).json({ message: "City required" });
-//   }
-
-//   const cacheKey = `hotels:${city.toLowerCase().trim()}`;
-
-//   try {
-//     const cachedHotels = await redis.get(cacheKey);
-
-//     if (cachedHotels) {
-//       console.log(`City ${city} returned from Redis 🚀`);
-//       return res.status(200).json(JSON.parse(cachedHotels));
-//     }
-
-//     const response = await axios.get("https://api.hotels-api.com/v1/hotels/search", {
-//       params: { city, limit: 10 },
-//       headers: {
-//         "X-API-KEY": process.env.API_KEY,
-//       },
-//     });
-
-//     const hotels = response.data.data || [];
-
-//     await redis.set(cacheKey, JSON.stringify(hotels), {
-//       EX: 1296000,
-//     });
-
-//     res.status(200).json(hotels);
-//   } catch (err) {
-//     console.error("FULL ERROR:", err);
-//     res.status(500).json({ message: "Server error" });
-//   }
-// }
-
-
-
-
-
-
-// import { createClient } from "redis";
-// import axios from "axios";
-
-// export default async function handler(req, res) {
-//   const { city } = req.query;
-
-//   if (!city) return res.status(400).json({ message: "City required" });
-
-//   const redis = createClient({ url: process.env.REDIS_URL });
-//   try {
-//     await redis.connect();
-
-//     const cacheKey = `hotels:${city.toLowerCase().trim()}`;
-//     const cachedHotels = await redis.get(cacheKey);
-
-//     if (cachedHotels) {
-//       console.log(`City ${city} returned from Redis 🚀`);
-//       await redis.disconnect();
-//       return res.status(200).json(JSON.parse(cachedHotels));
-//     }
-
-//     console.log(`Fetching hotels for city: ${city} from API...`);
-//     const response = await axios.get("https://api.hotels-api.com/v1/hotels/search", {
-//       params: { city, limit: 10 },
-//       headers: { "X-API-KEY": process.env.API_KEY },
-//     });
-
-//     const hotels = response.data.data || [];
-//     await redis.set(cacheKey, JSON.stringify(hotels), { EX: 1296000 });
-//     console.log(`Hotels for ${city} cached in Redis.`);
-
-//     await redis.disconnect();
-//     return res.status(200).json(hotels);
-
-//   } catch (err) {
-//     console.error("FULL ERROR:", err.response?.data || err.message || err);
-//     try { await redis.disconnect(); } catch {}
-//     return res.status(500).json({ message: "Server error" });
-//   }
-// }
-
-
-
-
-
-
-
-
-import { createClient } from "redis";
-import axios from "axios";
+const redis = createClient({ url: process.env.REDIS_URL })
 
 export default async function handler(req, res) {
-  const { city } = req.query;
+  const { city } = req.query
   if (!city) return res.status(400).json({ message: "City required" });
 
-  // создаём клиента Redis внутри функции
-  const redis = createClient({ url: process.env.REDIS_URL });
-
   try {
-    await redis.connect();
-
-    const cacheKey = `hotels:${city.toLowerCase().trim()}`;
-
-    // пробуем получить данные из Redis
-    const cachedHotels = await redis.get(cacheKey);
-    if (cachedHotels) {
-      console.log(`City ${city} returned from Redis ✅`);
-      await redis.disconnect();
-      return res.status(200).json(JSON.parse(cachedHotels));
+    if (!redis.isOpen) {
+      await redis.connect()
     }
 
-    console.log(`Fetching hotels for city: ${city} from API...`);
-    const response = await axios.get("https://api.hotels-api.com/v1/hotels/search", {
-      params: { city, limit: 10 },
-      headers: { "X-API-KEY": process.env.API_KEY },
-    });
+    const normalizedCity = city.toLowerCase().trim().replace(/\s+/g, "-")
+    const cacheKey = `hotels:${normalizedCity}`
 
-    const hotels = response.data.data || [];
+    const cached = await redis.get(cacheKey)
 
-    // сохраняем в Redis на 15 дней (1296000 секунд)
-    await redis.set(cacheKey, JSON.stringify(hotels), { EX: 1296000 });
-    console.log(`Hotels for ${city} cached in Redis ✅`);
+    if (cached) {
+      console.log(`City ${city} from cache`)
+      return res.status(200).json(JSON.parse(cached))
+    }
 
-    await redis.disconnect();
-    return res.status(200).json(hotels);
+    const response = await axios.get(
+      "https://api.hotels-api.com/v1/hotels/search",
+      {
+        params: { city, limit: 10 },
+        headers: { "X-API-KEY": process.env.API_KEY },
+        timeout: 5000
+      }
+    );
+
+    if (!response.data?.data) {
+      throw new Error("Invalid API response")
+    }
+
+    const hotels = response.data.data
+
+    await redis.set(cacheKey, JSON.stringify(hotels), { EX: 648000 })
+
+    return res.status(200).json(hotels)
 
   } catch (err) {
-    console.error("FULL ERROR:", err.response?.data || err.message || err);
-    try { await redis.disconnect(); } catch {}
-    return res.status(500).json({ message: "Server error" });
+    console.error("ERROR:", err.response?.data || err.message)
+    return res.status(500).json({ message: "Server error" })
   }
 }
