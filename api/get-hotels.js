@@ -1,16 +1,12 @@
-import { createClient } from "redis"
+import { getRedisClient } from "../lib/redis"
 import axios from "axios"
-
-const redis = createClient({ url: process.env.REDIS_URL })
 
 export default async function handler(req, res) {
   const { city } = req.query
   if (!city) return res.status(400).json({ message: "City required" });
 
   try {
-    if (!redis.isOpen) {
-      await redis.connect()
-    }
+    const redis = await getRedisClient()
 
     const normalizedCity = city.toLowerCase().trim().replace(/\s+/g, "-")
     const cacheKey = `hotels:${normalizedCity}`
