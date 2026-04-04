@@ -13,7 +13,6 @@ export const useHotels = () => {
 
   const resetSearch = () => {
     setIsSearched(false)
-    setError(null)
   }
 
   const fetchHotels = async (city: string) => {
