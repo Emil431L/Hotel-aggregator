@@ -31,7 +31,7 @@ export default async function handler(req, res) {
       throw new Error("Invalid API response")
     }
 
-    const hotels = response.data.data
+    const hotels = response.data.data || []
 
     await redis.set(cacheKey, JSON.stringify(hotels), { EX: 648000 })
 
