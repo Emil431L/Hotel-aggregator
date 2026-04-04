@@ -13,6 +13,7 @@ export const useHotels = () => {
 
   const resetSearch = () => {
     setIsSearched(false)
+    setError(error)
   }
 
   const fetchHotels = async (city: string) => {
@@ -37,6 +38,7 @@ export const useHotels = () => {
     try {
       const data = await getHotels(city)
       cache[cityName] = data
+      console.log(cache)
       setHotels(data)    
     } catch (err: any) {
       console.error(err)
