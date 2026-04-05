@@ -97,7 +97,7 @@ const Field = (props: FieldProps) => {
 
 const HotelList = () => {
   const [city, setCity] = useState<string>("")
-  const {hotels, loading, error, isSearched, fetchHotels, resetSearch} = useHotels(city)
+  const {hotels, loading, error, isSearched, fetchHotels} = useHotels(city)
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -110,7 +110,7 @@ const HotelList = () => {
 
       <form onSubmit={handleSubmit}>
       <Field label="City:">
-        <input type="text" value={city} onChange={(e) => {setCity(e.target.value); resetSearch()}} />
+        <input type="text" value={city} onChange={(e) => setCity(e.target.value)} />
       </Field>
 
         <button type="submit" disabled={loading}>

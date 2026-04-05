@@ -64,7 +64,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 export const useHotels = (city: string) => {
   const queryClient = useQueryClient()
-  
+
     const query = useQuery({
         queryKey: ["hotels", city],
         queryFn: () => getHotels(city),
@@ -79,6 +79,6 @@ export const useHotels = (city: string) => {
         error: query.error ? parseError(query.error) : null,
         isSearched: query.isFetched,
         fetchHotels: query.refetch,
-        resetSearch: () => queryClient.removeQueries({ queryKey: ["hotels", city] })
+        // resetSearch: () => queryClient.removeQueries({ queryKey: ["hotels", city] })
       }
 }
