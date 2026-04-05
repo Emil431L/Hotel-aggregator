@@ -68,7 +68,7 @@ export const useHotels = (city: string) => {
         queryKey: ["hotels", city],
         queryFn: () => getHotels(city),
         enabled: false,
-        staleTime: 1000 * 60 * 5,
+        staleTime: 100 * 60 * 5,
         retry: 1 
     })
 
