@@ -63,7 +63,6 @@ import { parseError } from '../utils/errHandle'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 export const useHotels = (city: string) => {
-  const queryClient = useQueryClient()
 
     const query = useQuery({
         queryKey: ["hotels", city],
