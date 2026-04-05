@@ -60,7 +60,7 @@
 
 import { getHotels } from '../services/getHotels'
 import { parseError } from '../utils/errHandle'
-import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 
 export const useHotels = (city: string) => {
 
