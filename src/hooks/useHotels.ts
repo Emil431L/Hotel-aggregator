@@ -60,15 +60,17 @@
 
 import { getHotels } from '../services/getHotels'
 import { parseError } from '../utils/errHandle'
-import { useQuery } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 export const useHotels = (city: string) => {
+  const queryClient = useQueryClient()
+  const cityName = city.trim().toLowerCase()
 
     const query = useQuery({
-        queryKey: ["hotels", city],
-        queryFn: () => getHotels(city),
+        queryKey: ["hotels", cityName],
+        queryFn: () => getHotels(cityName),
         enabled: false,
-        staleTime: 100 * 60 * 5,
+        staleTime: 1000 * 60 * 5,
         retry: 1 
     })
 
@@ -78,6 +80,6 @@ export const useHotels = (city: string) => {
         error: query.error ? parseError(query.error) : null,
         isSearched: query.isFetched,
         fetchHotels: query.refetch,
-        // resetSearch: () => queryClient.removeQueries({ queryKey: ["hotels", city] })
+        resetSearch: () => queryClient.removeQueries({ queryKey: ["hotels", city] })
       }
 }
