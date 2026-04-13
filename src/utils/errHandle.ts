@@ -5,21 +5,21 @@ export interface TypeError {
 }
 
 export const parseError = (err: any): TypeError => {
-    if (!err.response) {
+    if (!err?.response) {
         return {
-            title: "Error",
+            title: "Network Error",
             message: "Unable to reach server. Check your internet connection",
             type: "OFFLINE"
         }
     }
 
-    else {
-        const status = err.status
+    const status = err.response?.status
 
-        return {
-            title: status >= 500 ? "Server Error" : "Attention",
-            message: err.response?.data?.message || "Something went wrong",
-            type: "ONLINE"
-        }
+    const message = err.response?.data?.message || "Something went wrong"
+
+    return {
+        title: status >= 500 ? "Server Error" : "Request Error",
+        message,
+        type: "ONLINE"
     }
 }

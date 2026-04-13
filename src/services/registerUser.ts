@@ -1,12 +1,12 @@
 import api from "./api"
 
-interface RegisterData {
+interface RegisterUser {
     email: string,
     password: string
 }
 
-export const registerUser = async (userData: RegisterData): Promise<any> => {
-    const res = await api.post<any>("/register", userData)
+export const registerUser = async (userData: RegisterUser): Promise<any> => {
+    const res = await api.post("/register", userData)
 
     return res.data
 }

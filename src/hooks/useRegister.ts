@@ -1,4 +1,5 @@
 import { useMutation } from "@tanstack/react-query"
+import { parseError } from "../utils/errHandle"
 import { registerUser } from "../services/registerUser"
 
 export const useRegister = () => {
@@ -7,7 +8,9 @@ export const useRegister = () => {
     })
 
     return {
-        register: mutation.mutate,
+        register: mutation.mutateAsync,
+        response: mutation.data,
         isLoading: mutation.isPending,
+        error: mutation.error ? parseError(mutation.error) : null
     }
 }
