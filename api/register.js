@@ -1,6 +1,6 @@
 import { connectDB } from "../lib/db"
 import { User } from "../models/User"
-import bcrypt from "bcrypt"
+import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
 
 export async function register (req, res) {
