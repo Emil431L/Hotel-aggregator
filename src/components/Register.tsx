@@ -18,16 +18,18 @@ const Register = () => {
         }
 
         try {
-            await register({ email, password })
+            const result = await register({ email, password })
+
+            if (result || !error) {
             setEmail("")
             setPassword("")
-
-            navigate("/hotel")      
+            navigate("/hotel")
+        }
         } catch (err) {
         console.log(err)
         }
     }
-    
+
     const Login = () => {
         navigate("/login")
     }
