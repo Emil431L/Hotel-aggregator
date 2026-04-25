@@ -3,7 +3,7 @@ import { User } from "../models/User"
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
 
-export async function register (req, res) {
+async function register (req, res) {
     if (req.method !== "POST") {
         return res.status(400).json({message: "Method not allowed"})
     }
@@ -42,3 +42,5 @@ export async function register (req, res) {
         return res.status(500).json({message: "Server Error"})
     }
 }
+
+export default handler
