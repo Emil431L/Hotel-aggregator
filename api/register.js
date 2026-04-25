@@ -43,4 +43,4 @@ async function register (req, res) {
     }
 }
 
-export default handler
+export default register
