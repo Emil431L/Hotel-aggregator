@@ -1,5 +1,6 @@
 import { getRedisClient } from "../lib/redis"
 import { withAuth } from "../lib/withAuth"
+import https from "https" 
 import axios from "axios"
 
 async function handler(req, res) {
@@ -24,7 +25,8 @@ async function handler(req, res) {
       {
         params: { city, limit: 10 },
         headers: { "X-API-KEY": process.env.API_KEY },
-        timeout: 5000
+        timeout: 5000,
+        httpsAgent: new https.Agent({ rejectUnauthorized: false }) 
       }
     );
 
