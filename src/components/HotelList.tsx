@@ -110,7 +110,7 @@ const HotelList = () => {
   }
   
   return (
-    <div>
+    <div className="hotel-page">
       <h2>Hotel Search</h2>
 
       <form onSubmit={handleSubmit}>
