@@ -27,6 +27,7 @@ const Register = () => {
         console.log(err)
         }
     }
+    
     const Login = () => {
         navigate("/login")
     }

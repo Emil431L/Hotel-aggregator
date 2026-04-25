@@ -1,7 +1,8 @@
 import { getRedisClient } from "../lib/redis"
+import { withAuth } from "../lib/withAuth"
 import axios from "axios"
 
-export default async function handler(req, res) {
+async function handler(req, res) {
   const { city } = req.query
   if (!city) return res.status(400).json({ message: "City required" });
 
@@ -43,3 +44,4 @@ export default async function handler(req, res) {
   }
 }
 
+export default withAuth(handler)
