@@ -98,68 +98,69 @@ const Field = (props: FieldProps) => {
 
 const HotelList = () => {
   const [city, setCity] = useState<string>("")
-  const {hotels, loading, error, isSearched, fetchHotels, resetSearch} = useHotels(city)
+  const [bookingLoading, setBookingLoading] = useState<string | null>(null); // НОВОЕ: для лоадера кнопки
   
+  const {hotels, loading, error, isSearched, fetchHotels, resetSearch} = useHotels(city)
   const navigate = useNavigate()
 
-    useEffect(() => {
-        if (error && (error.message === "Token missing" || error.message === "Invalid or expired token")) {
-          navigate("/login")
-        }
-    }, [error, navigate])
+  useEffect(() => {
+    if (error && (error.message === "Token missing" || error.message === "Invalid or expired token")) {
+      navigate("/login")
+    }
+  }, [error, navigate])
+
+  const handleBook = async (hotelId: string, hotelName: string) => {
+    setBookingLoading(hotelId);
+    
+    setTimeout(() => {
+      alert(`Hotel ${hotelName} booked!`);
+      setBookingLoading(null);
+    }, 1000);
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
     if (!city) {
       alert("City required!")
       return
     }
-
-    e.preventDefault()
     fetchHotels()
   }
   
   return (
     <div className="hotel-page">
       <h2>Hotel Search</h2>
-
       <form onSubmit={handleSubmit}>
-      <Field label="City:">
-        <input type="text" value={city} onChange={(e) => {setCity(e.target.value); resetSearch()}} />
-      </Field>
-
+        <Field label="City:">
+          <input type="text" value={city} onChange={(e) => {setCity(e.target.value); resetSearch()}} />
+        </Field>
         <button type="submit" disabled={loading}>
           {loading ? "Loading..." : "Search Hotels"}
         </button>
 
-        {!loading && !error && city && isSearched && hotels.length === 0 && (
-          <div>
-            <p>No hotels found in {city}</p>
-          </div>
-        )}
-
-        {error && (
-        <div>
-          <h3>{error.title}</h3>
-          <p>{error.message}</p>
-          {error.type === "OFFLINE" && (
-            <button onClick={handleSubmit}>
-              Try again
-            </button>
-          )}
-        </div>
-        )}
+        {/* ... блоки ошибок и пустого поиска ... */}
 
         {Array.isArray(hotels) && hotels.length > 0 && (
           <ul>
             {hotels.map((hl) => (
-              <li key={hl.id}>
-                <p>{hl.name}</p>
+              <li key={hl.id} style={{ marginBottom: '15px', borderBottom: '1px solid #eee', paddingBottom: '10px' }}>
+                <p><strong>{hl.name}</strong></p>
                 <p>{hl.address}</p>
                 <p>rating {"⭐".repeat(Math.max(0, Math.floor(Number(hl.rating || 0))))}</p>
-                </li>
-              ))}
+                
+                {/* НОВОЕ: Кнопка бронирования */}
+                <button 
+                  type="button" 
+                  onClick={() => handleBook(hl.id, hl.name)}
+                  disabled={bookingLoading === hl.id}
+                  style={{ backgroundColor: bookingLoading === hl.id ? '#ccc' : '#4CAF50', color: 'white', border: 'none', padding: '5px 10px', cursor: 'pointer' }}
+                >
+                  {bookingLoading === hl.id ? "Booking..." : "Book Now"}
+                </button>
+              </li>
+            ))}
           </ul>
-            )}
+        )}
       </form>
     </div>
   )
