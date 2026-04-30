@@ -3,7 +3,7 @@ import User from "../models/User"
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
 
-async function register (req, res) {
+export default async function register (req, res) {
     if (req.method !== "POST") {
         return res.status(400).json({message: "Method not allowed"})
     }
@@ -36,11 +36,10 @@ async function register (req, res) {
 
         res.setHeader("Set-Cookie", `token=${token}; HttpOnly; Path=/; Max-Age=3600; SameSite=Lax`)
 
-        return res.status(200).json({message: "User registered sucessfully"})
+        return res.status(200).json({message: "User registered successfully"})
     } catch (err) {
         console.error(err)
         return res.status(500).json({message: "Server Error"})
     }
 }
 
-export default register

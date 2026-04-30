@@ -77,8 +77,9 @@
 
 
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useHotels } from '../hooks/useHotels';
+import { useNavigate } from 'react-router-dom';
 import '../css/HotelList.css';
 
 interface FieldProps {
@@ -98,6 +99,14 @@ const Field = (props: FieldProps) => {
 const HotelList = () => {
   const [city, setCity] = useState<string>("")
   const {hotels, loading, error, isSearched, fetchHotels, resetSearch} = useHotels(city)
+  
+  const navigate = useNavigate()
+
+    useEffect(() => {
+        if (error && (error.message === "Token missing" || error.message === "Invalid or expired token")) {
+          navigate("/login")
+        }
+    }, [error, navigate])
 
   const handleSubmit = async (e: React.FormEvent) => {
     if (!city) {
@@ -149,7 +158,7 @@ const HotelList = () => {
                 <p>rating {"⭐".repeat(Math.max(0, Math.floor(Number(hl.rating || 0))))}</p>
                 </li>
               ))}
-              </ul>
+          </ul>
             )}
       </form>
     </div>

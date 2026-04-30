@@ -3,8 +3,8 @@ import { useRegister } from "../hooks/useRegister"
 import { useNavigate } from "react-router-dom"
 
 const Register = () => {
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
+    const [email, setEmail] = useState<string>("")
+    const [password, setPassword] = useState<string>("")
     const { register, response, isLoading, error } = useRegister()
 
     const navigate = useNavigate()
@@ -20,7 +20,7 @@ const Register = () => {
         try {
             const result = await register({ email, password })
 
-            if (result || !error) {
+            if (result) {
             setEmail("")
             setPassword("")
             navigate("/hotel")
@@ -54,7 +54,7 @@ const Register = () => {
                 <button type="submit" disabled={isLoading}>
                     {isLoading ? "Loading..." : "Sign in"}
                 </button>
-                <button onClick={Login}>Login</button>
+                <button type="button" onClick={Login}>Login</button>
 
                 {error && (
                     <div>
@@ -63,9 +63,9 @@ const Register = () => {
                         {error.type === "OFFLINE" && (
                             <button onClick={() => register({ email, password })}></button>
                             )}
-                            </div>
-                        )}
-                        </form>
+                    </div>
+                )}
+            </form>
 
             {response && <p>{response.message}</p>}
         </div>
