@@ -138,7 +138,7 @@ const HotelList = () => {
         throw new Error(data.message || "Booking failed")
       }
 
-      setBookedIds(prev => [...prev, hotelId])
+      setBookedIds(prev => [...prev, String(hotelId)])
       alert(`Hotel ${hotelName} booked`)
 
     } catch (err: any) {
