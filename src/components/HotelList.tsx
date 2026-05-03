@@ -97,9 +97,22 @@ const Field = (props: FieldProps) => {
 const HotelList = () => {
   const [city, setCity] = useState<string>("")
   const [bookingId, setBookingId] = useState<string | null>(null)
+  const [bookedIds, setBookedIds] = useState<string[]>([])
   const {hotels, loading, error, isSearched, fetchHotels, resetSearch} = useHotels(city)
   
   const navigate = useNavigate()
+
+  useEffect(() => {
+    const fetchMyBookings = async () => {
+      const response = await fetch("/api/my-bookings")
+        if (response.ok) {
+          const data = await response.json()
+          setBookedIds(data.map((d: any) => d.hotelId))
+        }
+    }
+
+    fetchMyBookings()
+  }, [])
 
   useEffect(() => {
       if (error && (error.message === "Token missing" || error.message === "Invalid or expired token")) {
@@ -121,6 +134,7 @@ const HotelList = () => {
         throw new Error(data.message || "Booking failed")
       }
 
+      setBookedIds(prev => [...prev, hotelId])
       alert(`Hotel ${hotelName} booked`)
 
     } catch (err: any) {
@@ -174,17 +188,27 @@ const HotelList = () => {
 
         {Array.isArray(hotels) && hotels.length > 0 && (
           <ul>
-            {hotels.map((hl) => (
+            {hotels.map((hl) => {
+              const isAlreadyBooked = bookedIds.includes(hl.id)
+              
+              return (
               <li key={hl.id}>
                 <p>{hl.name}</p>
                 <p>{hl.address}</p>
                 <p>rating {"⭐".repeat(Math.max(0, Math.floor(Number(hl.rating || 0))))}</p>
 
+                {isAlreadyBooked ? (
+                  <button type="button" disabled>
+                    ✅ Booked
+                  </button>
+                ) : (
                 <button type="button" disabled={bookingId === hl.id} onClick={() => handleBook(hl.id, hl.name)}>
                   {bookingId === hl.id ? "Booking..." : "Book now"}
                 </button>
+                )}
                 </li>
-              ))}
+              )
+                })}
           </ul>
             )}
       </form>
