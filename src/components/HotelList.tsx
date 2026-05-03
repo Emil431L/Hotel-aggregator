@@ -193,7 +193,7 @@ const HotelList = () => {
         {Array.isArray(hotels) && hotels.length > 0 && (
           <ul>
             {hotels.map((hl) => {
-              const isAlreadyBooked = bookedIds.includes(hl.id)
+              const isAlreadyBooked = bookedIds.includes(String(hl.id))
               
               return (
               <li key={hl.id}>
