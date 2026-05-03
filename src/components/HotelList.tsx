@@ -193,6 +193,7 @@ const HotelList = () => {
         {Array.isArray(hotels) && hotels.length > 0 && (
           <ul>
             {hotels.map((hl) => {
+              console.log("ID из API:", hl.id, "Список забронированных:", bookedIds);
               const isAlreadyBooked = bookedIds.includes(String(hl.id))
               
               return (
