@@ -79,7 +79,6 @@ import { useState, useEffect } from 'react';
 import { useHotels } from '../hooks/useHotels';
 import { useNavigate } from 'react-router-dom';
 import '../css/HotelList.css';
-import { application } from 'express';
 
 interface FieldProps {
   label: string,
@@ -133,7 +132,7 @@ const HotelList = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!city) {
       alert("City required!")
       return
