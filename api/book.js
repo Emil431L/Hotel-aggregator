@@ -23,8 +23,8 @@ async function handler(req, res) {
         })
 
         await booking.save()
-        return res.status(200)
-        
+        return res.status(201).json({ message: "Booking successful" })  
+               
     } catch (err) {
         console.error(err)
         return res.status(500).json({message: "Server error"})
