@@ -104,11 +104,15 @@ const HotelList = () => {
 
   useEffect(() => {
     const fetchMyBookings = async () => {
+      try {
       const response = await fetch("/api/my-bookings")
         if (response.ok) {
           const data = await response.json()
-          setBookedIds(data.map((d: any) => d.hotelId))
+          setBookedIds(data.map((d: any) => String(d.hotelId)))
         }
+      } catch (err) {
+        console.error(err)
+      }
     }
 
     fetchMyBookings()
