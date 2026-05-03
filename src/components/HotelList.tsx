@@ -132,12 +132,13 @@ const HotelList = () => {
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
     if (!city) {
       alert("City required!")
       return
     }
 
-    e.preventDefault()
     fetchHotels()
   }
   
